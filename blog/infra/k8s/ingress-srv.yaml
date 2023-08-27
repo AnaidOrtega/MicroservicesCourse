@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+ # HOW TO TAKE INCOMMING TRAFFIC AND ROUTE THEM INTO DIFFERENT PODS
+  rules:
+  #DASH IS TO DESIGNATE AN ARRAY
+    # u trick ur computer by telling it that with this host its going to access localhost, this avoids conflicts in deployment
+    - host: posts.com
+      http:
+      # PATHS NEED TO BE LISTED FROM MOST IMPORTANT TO LESS IMPORTANT
+        paths:
+          - path: /posts/create
+            pathType: Prefix
+            backend:
+              service:
+              # UR GONNA ACCESS THIS CLUSTER IP BY GOING INTO POSTS.COM 
+                name: posts-clusterip-srv
+                port: 
+                  number: 4000
+          - path: /posts
+            pathType: Prefix
+            backend:
+              service:
+                name: query-srv
+                port:
+                  number: 4002
+          - path: /posts/?(.*)/comments
+            pathType: Prefix
+            backend:
+              service:
+                name: comments-srv
+                port:
+                  number: 4001
+          # MATCHES ANY PATH OF THE APPLICATION, THIS TYPE OF PATH NEEDS TO GO AT THE VERY END 
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: client-srv
+                port:
+                  number: 3000
+

@@ -1,0 +1,63 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+    #TO WATCH ALL THIS YAML FILES
+      - ./infra/k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: anaidortega/client
+    # TELL THAT SOME POD RUNNING CODE OUT OF CLIENT DIRECTORY
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+        # IT IS GOING TO TAKE CHANGES MADE INSIDE JS FILES AND THROW IT INTO THE POD ITSELF 
+        # IF THE CHANGES ARE NOT INCLUDED IN THIS PATH FILE SKAFFOLD IS GOING TO BUILD THE ENTIRE IMAGE AND UPDATE THE DEPLOYMENT TYPE TO IT
+          - src: 'src/**/*.js'
+            dest: .
+    - image: anaidortega/comments
+      context: comments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: anaidortega/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: anaidortega/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: anaidortega/posts
+      context: posts
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: anaidortega/query
+      context: query
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+            

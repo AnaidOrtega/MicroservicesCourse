@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moderation-depl
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moderation
+  template:
+    metadata:
+      labels:
+        app: moderation
+    spec:
+      containers:
+        - name: moderation
+          image: anaidortega/moderation
+#new object (cluster ip service)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-srv
+spec:
+  selector:
+    app: moderation
+    #NOT NECESARY TO WRITE THIS VALUE IS DEFAULT
+  type: ClusterIP
+  ports:
+    - name: moderation
+    #SAME PORT AS POD
+      protocol: TCP
+      port: 4003
+      targetPort: 4003

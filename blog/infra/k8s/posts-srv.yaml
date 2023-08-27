@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-srv
+spec:
+  #CUSTOMIZE HOW THE SERVICE ACTUALLY BEHAVES
+  type: NodePort
+  selector:
+    # IT NEED TO KNOW WHAT PODS TO EXPOSE
+    app: posts
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      # OPEN UP ACCESS IN, ACTUAL PORT POD IS LISTETING 
+      targetPort: 4000

@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # nginx.ingress.kubernetes.io/use-regex: 'true' THIS IS TO TELL NGINX THAT SOME OF THE ROUTE ARE GOING TO USE REGEX
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  rules:
+  #PRETEND DOMAIN NAME only working on local machine (AND EDIT HOST FILE)
+    - host: ticketing.dev
+      http:
+        paths:
+          - path: /api/users/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-srv
+                port:
+                  number: 3000

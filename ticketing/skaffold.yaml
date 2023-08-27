@@ -1,0 +1,22 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+#DPLOY: LIST OUT ALL THE CONFIG FILES WE WANT TO LOAD INTO OUR CLUSTER
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
+#WHENEVER WE BUILD AN IMAGE DO NOT TRY TO PUSH IT INTO DOCKER HUB
+build:
+  local:
+    push: false
+  artifacts:
+    - image: anaidortega/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+        #FILES SKAFFOLD NEEDS TO WATCH
+          - src: 'src/**/.ts'
+          #WHERE TO SYNC THIS FILE TO OUR RUNNING CONTAINER
+            dest: .

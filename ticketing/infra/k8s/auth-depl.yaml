@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  # SELECTOR: TELL DEPLOYMENT HOW TO FIND ALL THE PODS IT IS GOING TO CREATE
+  selector:
+    matchLabels: 
+      app: auth
+  # TEMPLATE: HOW TO CREATE EACH INDIVIDUAL POD
+  template:
+    metadata:
+      labels:
+        app: auth
+      # SPEC: TELL THE POD HOW TO BEHAVE
+    spec:
+      # CONTAINERS RUNNING INSIDE THIS POD
+      containers:
+        - name: auth
+          image: anaidortega/auth
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+    - name: auth
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
